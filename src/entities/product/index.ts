@@ -1,0 +1,5 @@
+export type { IProduct, IProductsResponse, IProductsParams, ISearchProductsParams } from './model/types'
+export { productsApi, useGetProductsQuery, useSearchProductsQuery } from './api/productsApi'
+export { useProductColumns, PAGE_SIZE } from './model/useProductColumns'
+export { ProductNameCell } from './ui/ProductNameCell/ProductNameCell'
+export { ProductRatingBadge } from './ui/ProductRatingBadge/ProductRatingBadge'
