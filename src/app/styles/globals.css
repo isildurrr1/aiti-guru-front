@@ -7,3 +7,15 @@
     --radius: 0.5rem;
   }
 }
+
+@keyframes progress-bar {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+
+@layer utilities {
+  .animate-progress-bar {
+    animation: progress-bar 1.2s ease-in-out infinite;
+  }
+}
