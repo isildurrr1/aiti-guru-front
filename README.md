@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# Тестовое задание — Andrey Romashev
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Использование ИИ
 
-Currently, two official plugins are available:
+В процессе выполнения тестового задания использовались модели Claude от Anthropic.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Claude Opus 4.6
+Использовался для вёрстки двух экранов приложения:
+- Экран авторизации (страница входа)
+- Экран списка товаров (страница с таблицей)
 
-## React Compiler
+### Claude Sonnet 4.6
+Использовался для решения технических задач:
+- Написание тест-кейсов для self-тестирования (валидация формы, авторизация, хранение токенов)
+- Подключение API через RTK Query (авторизация, получение товаров, поиск, пагинация, сортировка)
+- Разведение компонентов по архитектуре FSD (entities, features, widgets, pages, shared)
+- Реализация прогресс-бара при загрузке данных
+- Фикс вёрстки (прозрачность Card, полноширинная кнопка, модальное окно)
+- Ревью кода (поиск мёртвого кода, вынос типов, чистка опциональных полей)
+- Оптимизация (мемоизация `renderActions`, вынос чистых функций за пределы компонента)
+- Проверка соответствия проекта функциональным требованиям
+- Написание этого README
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Функциональные требования
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Форма входа
+- ✅ Валидация полей (обязательность заполнения, минимальная длина пароля)
+- ✅ Обработка ошибок API — текст ошибки отображается под полями
+- ✅ Чекбокс «Запомнить меня» — токен сохраняется в `localStorage` (сессия живёт после закрытия браузера)
+- ✅ Без чекбокса — токен сохраняется в `sessionStorage` (сессия сбрасывается при закрытии вкладки)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Список товаров
+- ✅ Столбцы соответствуют макету Figma: наименование, вендор, артикул, оценка, цена, действия
+- ✅ Прогресс-бар при подгрузке данных
+- ✅ Данные загружаются из API (dummyjson.com)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Сортировка
+- ✅ Сортировка по столбцам (цена, рейтинг и др.)
+- ✅ Состояние сортировки хранится в `useState` на протяжении сессии
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Добавление товара
+- ✅ По нажатию кнопки «Добавить» открывается модальная форма с полями: наименование, цена, вендор, артикул
+- ✅ При успешном добавлении отображается Toast-уведомление
+- ✅ Сохранение через API не требуется и не реализовано
+
+### Логика интерфейса
+- ✅ Рейтинг товара ниже 3 подсвечивается красным цветом
+
+### Поиск товаров
+- ✅ Поиск работает через API с debounce 400ms
+
+---
+
+## Стек
+
+- React 19 + TypeScript
+- Vite
+- Redux Toolkit + RTK Query
+- TanStack React Table v8
+- React Router v7
+- Tailwind CSS v4
+- Sonner (toast-уведомления)
+- Lucide React (иконки)
+
+## Архитектура
+
+Проект организован по методологии **Feature-Sliced Design (FSD)**:
+
+```
+src/
+├── app/          # Инициализация приложения, роутинг, стор
+├── pages/        # Страницы (login, products)
+├── widgets/      # Композитные блоки (add-product-modal)
+├── features/     # Фичи (auth, products)
+├── entities/     # Бизнес-сущности (product, user)
+└── shared/       # Переиспользуемые утилиты и UI-компоненты
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+Тестовые данные для входа: `emilys` / `emilyspass`
